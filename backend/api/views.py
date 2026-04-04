@@ -38,3 +38,22 @@ def post_task(request):
 
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
+
+def get_tasks(request):
+    if request.method == 'GET':
+        try:
+            id = request.body.get('user_id')
+            user = User.objects.get(id=id)
+            tasks = Task.objects.filter(created_by=user).values(
+                'id', 'title', 'content', 'created_by', 'created_at', 'updated_at',
+            )
+            return JsonResponse(list(tasks), status=200)
+            
+
+
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'User not found'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+
