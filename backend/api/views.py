@@ -6,54 +6,42 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Task
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 User = get_user_model()
 
 
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def tasks(request):
 
-def post_task(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
+    try:
+        if request.method == 'POST':
+            data = request.data
             title = data.get('title')
             content = data.get('content', '')
-            user_id = data.get('user_id')
-            user = User.objects.get(id=user_id)
+            user = request.user
             task = Task.objects.create(
                 title=title,
                 content=content,
                 created_by=user
             )
-            return JsonResponse({
+            return Response({
                 'id': task.id,
                 'title': task.title,
                 'content': task.content,
-                'created_by': user_id,
-                'created_at': task.created_at,
+                'created_by': user.id,
                 'updated_at': task.updated_at,
-            })
-
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-def get_tasks(request):
-    if request.method == 'GET':
-        try:
-            id = request.body.get('user_id')
-            user = User.objects.get(id=id)
+            }, status=201)
+        elif request.method == 'GET':
+            user = request.user
             tasks = Task.objects.filter(created_by=user).values(
-                'id', 'title', 'content', 'created_by', 'created_at', 'updated_at',
+                'id', 'title', 'content', 'created_by', 'created_at', 'updated_at'
             )
-            return JsonResponse(list(tasks), status=200)
-            
+            return Response(list(tasks))
 
-
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'User not found'}, status=404)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
 
