@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --brand: 355 95% 70%;
+  --brand-100: 355 80% 60%;
 }
 
 @theme inline {
@@ -10,12 +12,24 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-brand: hsl(var(--brand));
+  --color-brand-100: hsl(var(--brand-100));
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+  }
+}
+
+@layer utilities {
+  .h1 {
+    @apply text-[34px] leading-[42px] font-bold;
+  }
+
+  .body-1 {
+    @apply text-[16px] leading-[24px] font-normal;
   }
 }
 
