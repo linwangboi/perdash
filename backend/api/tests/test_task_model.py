@@ -10,7 +10,7 @@ User = get_user_model()
 
 class TaskModelTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(email='test@gmail.com', password='testpass')
 
     def test_task_creation(self):
         task = Task.objects.create(

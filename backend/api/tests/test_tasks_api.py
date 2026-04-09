@@ -10,7 +10,7 @@ User = get_user_model()
 
 class TaskAPITest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(email='test@gmail.com', password='testpass')
         self.client.force_authenticate(user=self.user)
         self.url = reverse('tasks')
 
@@ -69,11 +69,11 @@ class TaskAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_tasks_other_user_not_visible(self):
-        other_user = User.objects.create_user(username='other', password='pass')
+        other_user = User.objects.create_user(email='other@gmail.com', password='pass')
         Task.objects.create(title='Other Task', created_by=other_user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 0)  
 
     def test_post_task_invalid_method(self):
         response = self.client.put(self.url, {'title': 'Task'})

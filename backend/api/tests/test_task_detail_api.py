@@ -9,7 +9,7 @@ User = get_user_model()
 
 class TaskGetTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(email='test@gmailcom', password='testpass')
         self.client.force_authenticate(user=self.user)
         self.task = Task.objects.create(
             title='Test Task',
@@ -35,7 +35,7 @@ class TaskGetTest(APITestCase):
         
 class TaskPatchTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(email='test@gmail.com', password='testpass')
         self.client.force_authenticate(user=self.user)
         self.task = Task.objects.create(
             title='Test Task',
@@ -63,7 +63,7 @@ class TaskPatchTest(APITestCase):
 
 class TaskDeleteTest(APITestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpass')
+        self.user = User.objects.create_user(email='test@gmail.com', password='testpass')
         self.client.force_authenticate(user=self.user)
         self.task = Task.objects.create(
             title='Test Task',

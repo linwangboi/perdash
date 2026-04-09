@@ -1,22 +1,17 @@
-
 from django.contrib.auth import get_user_model
-from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from api.serializers import SignupSerializer
 
 User = get_user_model()
 
 
 @api_view(["POST"])
 def signup(request):
-    try:
-        data = request.data
-        if User.objects.filter(username=data["username"]).exists():
-            return Response({"error": "User already exists"}, status=400)
-        user = User.objects.create_user(
-            username=data["username"], password=data["password"]
+    serializer = SignupSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        return Response(
+            {"message": "User created successfully", "email": user.email}, status=201
         )
-
-        return Response({"message": "User created"}, status=201)
-    except Exception as e:
-        return Response({"error": str(e)}, status=400)
+    return Response({"error": serializer.errors}, status=400)
