@@ -9,10 +9,11 @@ const Layout = ({ children }) => {
           <div className="flex justify-center">
             <Image
               src="/assets/logo-full.svg"
+              loading="eager"
               alt="logo"
               width={224}
               height={82}
-              className="h-auto invert"
+              className="invert"
             />
           </div>
           <div className="space-y-5 text-white">
