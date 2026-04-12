@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, Task
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -7,26 +7,45 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'first_name', 'last_name', 'is_verified', 'date_joined']
-        read_only_fields = ['id', 'date_joined']
+        fields = [
+            "id",
+            "email",
+            "first_name",
+            "last_name",
+            "is_verified",
+            "date_joined",
+        ]
+        read_only_fields = ["id", "date_joined"]
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    """Serializer for Task model"""
+
+    created_by = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = Task
+        fields = ["id", "title", "content", "created_by", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at", "created_by"]
 
 
 class SignupSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
+
     password = serializers.CharField(write_only=True, min_length=8)
     password2 = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'password', 'password2', 'first_name', 'last_name']
+        fields = ["email", "password", "password2", "first_name", "last_name"]
         extra_kwargs = {
-            'first_name': {'required': False},
-            'last_name': {'required': False},
+            "first_name": {"required": False},
+            "last_name": {"required": False},
         }
 
     def validate(self, data):
-        if data['password'] != data.pop('password2'):
-            raise serializers.ValidationError({'password': 'Passwords do not match'})
+        if data["password"] != data.pop("password2"):
+            raise serializers.ValidationError({"password": "Passwords do not match"})
         return data
 
     def create(self, validated_data):
