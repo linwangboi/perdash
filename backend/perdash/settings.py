@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "drf_spectacular",
+    "corsheaders",
 ]
 
 AUTH_USER_MODEL = "api.CustomUser"
@@ -52,7 +53,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -62,9 +63,10 @@ SIMPLE_JWT = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    # "django.middleware.csrf.CsrfViewMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -139,3 +141,7 @@ STATIC_URL = "static/"
 
 # Email configuration for development
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+CORS_ALLOW_ALL_ORIGINS = True  # dev only
+
+CORS_ALLOW_CREDENTIALS = True  # if using cookies

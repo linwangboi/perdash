@@ -12,15 +12,76 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getErrorMessage } from "@/lib/utils";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
 const AuthForm = ({ type }) => {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    password2: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.id]: e.target.value, 
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
+    try {
+      const url = type === "sign-in" ? `${BASE_URL}/api/token/` : `${BASE_URL}/api/signup/`;
+      const payload =
+        type === "sign-in"
+          ? {
+              email: form.email,
+              password: form.password,
+            }
+          : {
+              email: form.email,
+              password: form.password,
+              password2: form.password2,
+            };
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+
+        setErrorMessage(getErrorMessage(data));
+        return
+      }
+
+      if (type === "sign-in") {
+        localStorage.setItem("access", data.access);
+        localStorage.setItem("refresh", data.refresh);
+      }
+      // todo home page reroute
+      console.log("Success:", data);
+    } catch (error) {
+      setErrorMessage("Something went wrong");
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Card className="w-full max-w-xl">
-      <CardHeader className='mb-2'>
-        <CardTitle className='text-semibold text-2xl'>
+      <CardHeader className="mb-2">
+        <CardTitle className="text-semibold text-2xl">
           {type === "sign-in"
             ? "Login to your account"
             : "Sign up for an account"}
@@ -28,7 +89,7 @@ const AuthForm = ({ type }) => {
         <CardDescription>
           {type === "sign-in"
             ? "Enter your email below to login to your account"
-            : "Enter your email below and confirm your password"}
+            : "Enter your email and confirm your password"}
         </CardDescription>
         <CardAction>
           {type === "sign-in" ? (
@@ -39,15 +100,16 @@ const AuthForm = ({ type }) => {
         </CardAction>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-6">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
-                className='border border-gray-400 rounded-2xl'
+                value={form.email}
+                onChange={handleChange}
+                className="border border-gray-400 rounded-2xl"
                 required
               />
             </div>
@@ -55,27 +117,50 @@ const AuthForm = ({ type }) => {
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
               </div>
-              <Input id="password" className='border border-gray-400 rounded-2xl' type="password" required />
+              <Input
+                id="password"
+                className="border border-gray-400 rounded-2xl"
+                value={form.password}
+                onChange={handleChange}
+                type="password"
+                required
+              />
             </div>
             {type === "sign-up" && (
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Confirm password</Label>
                 </div>
-                <Input id="password2" className='border border-gray-400 rounded-2xl' type="password" required />
+                <Input
+                  id="password2"
+                  className="border border-gray-400 rounded-2xl"
+                  type="password"
+                  value={form.password2}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             )}
+            {errorMessage && (
+              <p className="text-red-500 text-sm">
+                {errorMessage}
+              </p>
+            )}
+            <hr className="text-gray-500/30" />
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-brand rounded-3xl text-lg text-white font-semibold py-4 shadow-xs"
+            >
+              {isLoading
+                ? "Loading..."
+                : type === "sign-in"
+                  ? "Login"
+                  : "Sign Up"}
+            </Button>
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex-col gap-2 border-gray-400/30">
-        <Button
-          type="submit"
-          className="w-full bg-brand rounded-3xl text-lg text-white font-semibold py-4"
-        >
-          Login
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
