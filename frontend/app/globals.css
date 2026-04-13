@@ -1,8 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
-
-
 
 :root {
   --brand: 355 95% 70%;
@@ -32,6 +29,10 @@
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
   --radius: 0.5rem;
+  --light-100: 51 63 78;
+  --light-200: 163 178 199;
+  --light-300: 242 245 249;
+  --light-400: 242 244 248;
 }
 
 @theme inline {
@@ -80,25 +81,101 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: var(--font-poppins);
+  }
+}
+
 @layer utilities {
+  .remove-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: transparent;
+  }
+
   .h1 {
-    @apply text-[34px] leading-[42px] font-bold;
+    font-size: 34px;
+    line-height: 42px;
+    font-weight: bold;
+  }
+  .h5 {
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
   }
 
   .body-1 {
-    @apply text-[16px] leading-[24px] font-normal;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: normal;
+  }
+
+  .main-content {
+    height: 100%;
+    flex: 1;
+    overflow: auto;
+    background-color: hsl(var(--light-400));
+    padding: 1.75rem 1.25rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .main-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-header {
+    @apply flex h-[60px] justify-between px-5 sm:hidden;
+  }
+
+  .sidebar {
+    @apply hidden h-screen w-22.5 flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px];
+    /* Add scrollbar hiding with arbitrary values */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .sidebar::-webkit-scrollbar {
+    @apply hidden; /* This works because hidden IS a Tailwind class! */
+  }
+
+  .sidebar-nav {
+    @apply mt-9 flex-1 gap-1 text-brand;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
   }
 }
 
-body {
-  font-family: var(--font-poppins);
+@media (min-width: 640px) {
+  .main-content {
+    margin-right: 1.75rem;
+    border-radius: 30px;
+  }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
+@media (min-width: 768px) {
+  .main-content {
+    margin-bottom: 1.75rem;
+    padding: 2.5rem 2.25rem;
   }
 }
