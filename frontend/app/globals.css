@@ -29,10 +29,28 @@
   --chart-4: 43 74% 66%;
   --chart-5: 27 87% 67%;
   --radius: 0.5rem;
-  --light-100: 51 63 78;
-  --light-200: 163 178 199;
-  --light-300: 242 245 249;
-  --light-400: 242 244 248;
+
+  /* ===== NEW: LIGHT COLORS ===== */
+  --light-100: 51 63 78; /* #333F4E */
+  --light-200: 163 178 199; /* #A3B2C7 */
+  --light-300: 242 245 249; /* #F2F5F9 */
+  --light-400: 242 244 248; /* #F2F4F8 */
+
+  /* ===== NEW: SOLID COLORS ===== */
+  --red: 255 116 116; /* #FF7474 */
+  --error: 184 0 0; /* #b80000 */
+  --green: 61 217 179; /* #3DD9B3 */
+  --blue: 86 184 255; /* #56B8FF */
+  --pink: 238 168 253; /* #EEA8FD */
+  --orange: 249 171 114; /* #F9AB72 */
+
+  /* ===== NEW: DARK COLORS ===== */
+  --dark-100: 4 5 12; /* #04050C */
+  --dark-200: 19 21 36; /* #131524 */
+  /* ===== NEW: BOX SHADOWS ===== */
+  --drop-1: 0px 10px 30px 0px rgba(66, 71, 97, 0.1);
+  --drop-2: 0 8px 30px 0 rgba(65, 89, 214, 0.3);
+  --drop-3: 0 8px 30px 0 rgba(65, 89, 214, 0.1);
 }
 
 @theme inline {
@@ -79,6 +97,24 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ===== NEW: LIGHT COLOR MAPPINGS ===== */
+  --color-light-100: hsl(var(--light-100));
+  --color-light-200: hsl(var(--light-200));
+  --color-light-300: hsl(var(--light-300));
+  --color-light-400: hsl(var(--light-400));
+
+  /* ===== NEW: SOLID COLOR MAPPINGS ===== */
+  --color-red: rgb(var(--red));
+  --color-error: rgb(var(--error));
+  --color-green: rgb(var(--green));
+  --color-blue: rgb(var(--blue));
+  --color-pink: rgb(var(--pink));
+  --color-orange: rgb(var(--orange));
+
+  /* ===== NEW: DARK COLOR MAPPINGS ===== */
+  --color-dark-100: rgb(var(--dark-100));
+  --color-dark-200: rgb(var(--dark-200));
 }
 
 @layer base {
@@ -128,6 +164,15 @@
     line-height: 24px;
     font-weight: normal;
   }
+  .subtitle-1 {
+    @apply text-[16px] leading-[24px] font-medium;
+  }
+  .subtitle-2 {
+    @apply text-[14px] leading-[20px] font-semibold;
+  }
+  .caption {
+    @apply text-[12px] leading-[16px] font-normal;
+  }
 
   .main-content {
     height: 100%;
@@ -149,13 +194,12 @@
 
   .sidebar {
     @apply hidden h-screen w-22.5 flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px];
-    /* Add scrollbar hiding with arbitrary values */
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
 
   .sidebar::-webkit-scrollbar {
-    @apply hidden; /* This works because hidden IS a Tailwind class! */
+    @apply hidden;
   }
 
   .sidebar-nav {
@@ -163,6 +207,29 @@
     font-size: 16px;
     line-height: 24px;
     font-weight: 600;
+  }
+  .sidebar-nav-item {
+    @apply flex  gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center lg:px-[30px] h-[52px] lg:rounded-full text-brand;
+
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 600;
+  }
+  .shad-active {
+    @apply bg-brand text-white;
+    box-shadow: var(--drop-2);
+  }
+  .nav-icon {
+    @apply w-6 filter invert opacity-25;
+  }
+  .nav-icon-active {
+    @apply invert-0 opacity-100;
+  }
+  .sidebar-user-info {
+    @apply mt-4 flex items-center justify-center gap-2 rounded-full bg-brand/10 p-1 text-gray-500 lg:justify-start lg:p-3;
+  }
+  .sidebar-user-avatar {
+    @apply aspect-square w-10 rounded-full object-cover;
   }
 }
 
