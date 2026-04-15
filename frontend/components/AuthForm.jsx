@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getErrorMessage } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,6 +26,7 @@ const AuthForm = ({ type }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
 
   const handleChange = (e) => {
     setForm({
@@ -67,9 +69,11 @@ const AuthForm = ({ type }) => {
       if (type === "sign-in") {
         localStorage.setItem("access", data.access);
         localStorage.setItem("refresh", data.refresh);
+      } else if (type === 'sign-up') {
+        router.push('/sign-in');
+        return;
       }
-      // todo home page reroute
-      console.log("Success:", data);
+      router.push('/');
     } catch (error) {
       setErrorMessage("Something went wrong");
       console.log(error);
@@ -93,9 +97,9 @@ const AuthForm = ({ type }) => {
         </CardDescription>
         <CardAction>
           {type === "sign-in" ? (
-            <Button variant="link">Sign Up</Button>
+            <Button variant="link" onClick={() => router.push('/sign-up')}>Sign Up</Button>
           ) : (
-            <Button variant="link">Login</Button>
+            <Button variant="link"onClick={() => router.push('/sign-in')} >Login</Button>
           )}
         </CardAction>
       </CardHeader>
