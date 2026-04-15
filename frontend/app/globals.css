@@ -241,6 +241,18 @@
   .sign-out-button {
     @apply flex items-center justify-center h-[52px] min-w-[54px] rounded-full bg-brand/10 p-0 text-brand shadow-none transition-all hover:bg-brand/20;
   }
+  .search {
+    @apply relative w-full md:max-w-[480px];
+  }
+  .search-input-wrapper {
+    @apply flex h-[52px] flex-1 items-center gap-3 rounded-full px-4;
+    box-shadow: var(--drop-3);
+  }
+
+
+
+
+
 }
 
 @media (min-width: 640px) {
