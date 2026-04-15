@@ -16,7 +16,7 @@ const Sidebar = ({ firstName, email }) => {
           alt="logo"
           width={160}
           height={50}
-          className="hidden h-auto ml-6 lg:block"
+          className="hidden h-auto ml-10 lg:block opacity-30"
         />
         <Image
           src="/assets/logo-full-red.svg"
@@ -56,8 +56,8 @@ const Sidebar = ({ firstName, email }) => {
       <div className='sidebar-user-info'>
         <Image src='/assets/avatar.png' alt='avatar' width={44} height={44} className="sidebar-user-avatar" />
         <div className="hidden lg:block">
-          <p className="subtitle-2 capitalize">first last</p>
-          <p className="caption">email@example.com</p>
+          <p className="subtitle-2 capitalize">{firstName}</p>
+          <p className="caption">{email}</p>
         </div>
       </div>
     </aside>

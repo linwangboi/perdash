@@ -11,7 +11,7 @@ const layout = async ({children}) => {
         <Sidebar firstName={'Test'} email={'example@gmail.com'} />
         <section className='flex h-full flex-1 flex-col'>
             <MobileNav />
-            <Header />
+            <Header email={'example@gmail.com'} />
             <div className='main-content'>{children}</div>
         </section>
     </main>
