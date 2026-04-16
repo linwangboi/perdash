@@ -25,7 +25,15 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["id", "title", "content", "created_by", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "title",
+            "content",
+            "created_by",
+            "created_at",
+            "updated_at",
+            "star",
+        ]
         read_only_fields = ["id", "created_at", "updated_at", "created_by"]
 
 
@@ -56,4 +64,3 @@ class SignupSerializer(serializers.ModelSerializer):
 class SignupResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
     email = serializers.EmailField()
-    

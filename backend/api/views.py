@@ -1,6 +1,7 @@
 # backend/api/views.py
 
 from django.contrib.auth import get_user_model
+from django.db import models
 
 from .models import Task
 from .serializers import TaskSerializer
@@ -9,6 +10,28 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+
+
+@extend_schema(
+    responses={200: TaskSerializer(many=True)},
+)
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def task_search(request):
+    query = request.GET.get("q", "")
+    if not query:
+        return Response(
+            {"error": "Query parameter 'q' is required"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    user = request.user
+    tasks_qs = Task.objects.filter(created_by=user).filter(
+        models.Q(title__icontains=query) | models.Q(content__icontains=query)
+    )
+    serializer = TaskSerializer(tasks_qs, many=True)
+    return Response(serializer.data)
+
 
 User = get_user_model()
 
