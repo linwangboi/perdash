@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from .models import Task
-from .serializers import TaskSerializer
+from .serializers import TaskSerializer, CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -84,3 +84,15 @@ def task_detail(request, pk):
     elif request.method == "DELETE":
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(
+    responses={200: CustomUserSerializer},
+)
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_profile(request):
+    """Get current user's profile information"""
+    serializer = CustomUserSerializer(request.user)
+    print(request.user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
