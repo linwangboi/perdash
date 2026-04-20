@@ -94,5 +94,4 @@ def task_detail(request, pk):
 def user_profile(request):
     """Get current user's profile information"""
     serializer = CustomUserSerializer(request.user)
-    print(request.user)
     return Response(serializer.data, status=status.HTTP_200_OK)

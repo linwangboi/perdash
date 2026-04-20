@@ -12,7 +12,7 @@ const Search = () => {
   const [open, setOpen] = useState(false);
   const [debouncedQuery] = useDebounce(query, 300);
   const [results, setResults] = useState([]);
-  const access = useMemo(() => localStorage.getItem("access"), []);
+  const access = useMemo(() => window.localStorage.getItem("access"), []);
   useEffect(() => {
     const fetchFiles = async () => {
       if (debouncedQuery.length === 0) {

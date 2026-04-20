@@ -6,7 +6,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -67,8 +66,8 @@ const AuthForm = ({ type }) => {
       }
 
       if (type === "sign-in") {
-        localStorage.setItem("access", data.access);
-        localStorage.setItem("refresh", data.refresh);
+        window.localStorage.setItem("access", data.access);
+        window.localStorage.setItem("refresh", data.refresh);
       } else if (type === 'sign-up') {
         router.push('/sign-in');
         return;
