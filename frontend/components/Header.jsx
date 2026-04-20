@@ -5,29 +5,14 @@ import { useRouter } from 'next/navigation'
 import Search from './Search'
 import { Button } from './ui/button'
 import Image from 'next/image'
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
+import { signOut } from '@/lib/auth'
 
 const Header = ({ email }) => {
   const router = useRouter()
 
   const handleSignOut = async () => {
-    const refresh = window.localStorage.getItem('refresh')
-    try {
-      if (refresh) {
-        await fetch(`${BASE_URL}/api/signout/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refresh }),
-        })
-      }
-    } catch (error) {
-      console.error('Sign out failed:', error)
-    } finally {
-      window.localStorage.removeItem('access')
-      window.localStorage.removeItem('refresh')
-      router.push('/sign-in')
-    }
+    await signOut()
+    router.push('/sign-in')
   }
 
   return (

@@ -3,6 +3,6 @@
 2. task detail page
 3. for search result, formulate it for them to have unified title, content and date width, add scrollbar, default height, add redirect to detail page icon
 4. click non search result pane to setopen to false;
+5. user profile edit endpoint to allow user edit user first name last name
 
 
-# get user detail, first name, last name, email

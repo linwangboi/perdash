@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getErrorMessage } from "@/lib/utils";
+import { saveTokens } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -60,14 +61,12 @@ const AuthForm = ({ type }) => {
       });
       const data = await res.json();
       if (!res.ok) {
-
         setErrorMessage(getErrorMessage(data));
         return
       }
 
       if (type === "sign-in") {
-        window.localStorage.setItem("access", data.access);
-        window.localStorage.setItem("refresh", data.refresh);
+        saveTokens({ access: data.access, refresh: data.refresh });
       } else if (type === 'sign-up') {
         router.push('/sign-in');
         return;

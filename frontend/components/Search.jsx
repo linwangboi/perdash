@@ -1,9 +1,10 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { useDebounce } from "use-debounce";
 import { formatCreatedAt } from "@/lib/utils";
+import { fetchWithAuth } from "@/lib/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -12,26 +13,36 @@ const Search = () => {
   const [open, setOpen] = useState(false);
   const [debouncedQuery] = useDebounce(query, 300);
   const [results, setResults] = useState([]);
-  const access = useMemo(() => window.localStorage.getItem("access"), []);
   useEffect(() => {
     const fetchFiles = async () => {
       if (debouncedQuery.length === 0) {
-        (setResults([]), setOpen(false));
+        setResults([]);
+        setOpen(false);
         return;
       }
-      const res = await fetch(
-        `${BASE_URL}/api/tasks/search/?q=${debouncedQuery}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${access}`,
+
+      try {
+        const res = await fetchWithAuth(
+          `${BASE_URL}/api/tasks/search/?q=${debouncedQuery}`,
+          {
+            method: "GET",
           },
-        },
-      );
-      const data = await res.json();
-      setResults(data);
-      setOpen(true);
+        );
+
+        if (!res.ok) {
+          setResults([]);
+          setOpen(false);
+          return;
+        }
+
+        const data = await res.json();
+        setResults(data);
+        setOpen(true);
+      } catch (error) {
+        console.error("Search failed:", error);
+        setResults([]);
+        setOpen(false);
+      }
     };
     fetchFiles();
   }, [debouncedQuery]);
@@ -48,7 +59,7 @@ const Search = () => {
         />
       </div>
       {open && (
-        <ul className="search-result min-w-[800px] max-w-[900px]">
+        <ul className="search-result min-w-200 max-w-225">
           {results.length > 0 ? (
             results.map((task) => (
               <li
