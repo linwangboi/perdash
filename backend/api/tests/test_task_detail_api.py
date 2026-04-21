@@ -25,6 +25,7 @@ class TaskGetTest(APITestCase):
         self.assertEqual(task["content"], "Test Content")
         self.assertEqual(task["created_by"], self.user.id)
         self.assertFalse(task["star"])  # Check default star value
+        self.assertFalse(task["done"])  # Check default done value
 
     def test_task_not_exist(self):
         response = self.client.get(reverse("task_detail", args=[100]))
@@ -70,6 +71,35 @@ class TaskPatchTest(APITestCase):
         # Check database
         self.task.refresh_from_db()
         self.assertTrue(self.task.star)
+
+    def test_patch_task_detail_done(self):
+        response = self.client.patch(self.url, {"done": True}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        task = response.data
+        self.assertTrue(task["done"])
+        # Check database
+        self.task.refresh_from_db()
+        self.assertTrue(self.task.done)
+
+    def test_patch_task_detail_multiple_fields(self):
+        data = {
+            "title": "Updated Title",
+            "content": "Updated content",
+            "done": True,
+            "star": True,
+        }
+        response = self.client.patch(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        task = response.data
+        self.assertEqual(task["title"], "Updated Title")
+        self.assertEqual(task["content"], "Updated content")
+        self.assertTrue(task["done"])
+        self.assertTrue(task["star"])
+
+    def test_patch_task_detail_invalid_data(self):
+        # Empty title is invalid
+        response = self.client.patch(self.url, {"title": ""}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class TaskDeleteTest(APITestCase):

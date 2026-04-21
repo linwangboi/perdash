@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from api.serializers import SignupSerializer, CustomUserSerializer
+from api.serializers import SignupSerializer, CustomUserSerializer, TaskSerializer
+from api.models import Task
 
 User = get_user_model()
 
@@ -77,3 +78,77 @@ class CustomUserSerializerTest(TestCase):
         user = User.objects.create_user(email="test@gmail.com", password="testpass")
         serializer = CustomUserSerializer(user)
         self.assertIn("date_joined", serializer.data)
+
+
+class TaskSerializerTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email="test@gmail.com", password="testpass"
+        )
+
+    def test_task_serializer_default_done_false(self):
+        task = Task.objects.create(
+            title="Test Task", content="Test content", created_by=self.user
+        )
+        serializer = TaskSerializer(task)
+        data = serializer.data
+        self.assertFalse(data["done"])
+        self.assertEqual(data["title"], "Test Task")
+        self.assertEqual(data["content"], "Test content")
+
+    def test_task_serializer_done_true(self):
+        task = Task.objects.create(
+            title="Completed Task",
+            content="This task is done",
+            created_by=self.user,
+            done=True,
+        )
+        serializer = TaskSerializer(task)
+        data = serializer.data
+        self.assertTrue(data["done"])
+
+    def test_task_serializer_all_fields(self):
+        task = Task.objects.create(
+            title="Full Task",
+            content="Full content",
+            created_by=self.user,
+            star=True,
+            done=True,
+        )
+        serializer = TaskSerializer(task)
+        data = serializer.data
+        self.assertIn("id", data)
+        self.assertEqual(data["title"], "Full Task")
+        self.assertEqual(data["content"], "Full content")
+        self.assertEqual(data["created_by"], self.user.id)
+        self.assertTrue(data["star"])
+        self.assertTrue(data["done"])
+        self.assertIn("created_at", data)
+        self.assertIn("updated_at", data)
+
+    def test_task_serializer_write_done(self):
+        data = {
+            "title": "New Task",
+            "content": "New content",
+            "done": True,
+            "star": False,
+        }
+        serializer = TaskSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        task = serializer.save(created_by=self.user)
+        self.assertTrue(task.done)
+        self.assertEqual(task.title, "New Task")
+
+    def test_task_serializer_update_done(self):
+        task = Task.objects.create(
+            title="Task to Update",
+            content="Original content",
+            created_by=self.user,
+            done=False,
+        )
+        data = {"done": True}
+        serializer = TaskSerializer(task, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        updated_task = serializer.save()
+        self.assertTrue(updated_task.done)
+        self.assertEqual(updated_task.title, "Task to Update")

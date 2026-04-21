@@ -4,6 +4,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from ..models import Task
+from unittest.mock import patch
 
 User = get_user_model()
 
@@ -31,6 +32,7 @@ class TaskAPITest(APITestCase):
         self.assertEqual(response.data[0]["content"], "Content 1")
         self.assertEqual(response.data[0]["created_by"], self.user.id)
         self.assertFalse(response.data[0]["star"])  # Check default star value
+        self.assertFalse(response.data[0]["done"])  # Check default done value
         self.assertIn("created_at", response.data[0])
         self.assertIn("updated_at", response.data[0])
 
@@ -44,12 +46,14 @@ class TaskAPITest(APITestCase):
         )  # Note: bug in views.py, returns 'content' instead of task.content
         self.assertEqual(response.data["created_by"], self.user.id)
         self.assertFalse(response.data["star"])  # Check default star value
+        self.assertFalse(response.data["done"])  # Check default done value
         self.assertIn("updated_at", response.data)
         # Check database
         task = Task.objects.get(id=response.data["id"])
         self.assertEqual(task.title, "New Task")
         self.assertEqual(task.content, "New content")
         self.assertFalse(task.star)
+        self.assertFalse(task.done)
 
     def test_post_task_minimal(self):
         data = {"title": "Minimal Task"}
@@ -57,6 +61,50 @@ class TaskAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         task = Task.objects.get(id=response.data["id"])
         self.assertEqual(task.content, "")
+        self.assertFalse(task.done)
+
+    def test_post_task_with_done_true(self):
+        data = {"title": "Completed Task", "content": "Already done", "done": True}
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.data["done"])
+        task = Task.objects.get(id=response.data["id"])
+        self.assertTrue(task.done)
+
+    def test_post_task_with_star_and_done(self):
+        data = {
+            "title": "Important Done Task",
+            "content": "Both starred and done",
+            "star": True,
+            "done": True,
+        }
+        response = self.client.post(self.url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.data["star"])
+        self.assertTrue(response.data["done"])
+        task = Task.objects.get(id=response.data["id"])
+        self.assertTrue(task.star)
+        self.assertTrue(task.done)
+
+    def test_tasks_exception_handling(self):
+        """Test that exception in tasks view is caught and handled"""
+        # This tests the exception handler in the tasks view (lines 60-61)
+        # Mocking Task.objects.filter to raise an exception during GET
+        with patch("api.views.Task.objects.filter") as mock_filter:
+            mock_filter.side_effect = Exception("Database error")
+            response = self.client.get(self.url)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn("error", response.data)
+
+    def test_post_task_with_exception(self):
+        """Test exception handling during POST request"""
+        # Mocking serializer.save to raise an exception
+        with patch("api.views.TaskSerializer.save") as mock_save:
+            mock_save.side_effect = Exception("Save error")
+            data = {"title": "New Task", "content": "Content"}
+            response = self.client.post(self.url, data, format="json")
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn("error", response.data)
 
     def test_post_task_missing_title(self):
         data = {"content": "No title"}
