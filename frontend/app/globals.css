@@ -260,6 +260,9 @@
   .caption {
     @apply text-[12px] leading-[16px] font-normal;
   }
+  .dashboard-container {
+    @apply mx-auto max-w-7xl;
+  }
 
 
 

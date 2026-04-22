@@ -1,13 +1,13 @@
 export const navItems = [
   {
-    name: "Today",
-    icon: "/assets/today.svg",
-    url: "/",
-  },
-  {
     name: "All Tasks",
     icon: "/assets/all.svg",
     url: "/all",
+  },
+  {
+    name: "Today",
+    icon: "/assets/today.svg",
+    url: "/today",
   },
   {
     name: "Upcoming",
