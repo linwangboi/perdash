@@ -264,9 +264,21 @@
     @apply mx-auto max-w-7xl;
   }
 
-
-
-
+  .page-container {
+    @apply mx-auto w-full max-w-7xl flex flex-col items-center gap-8;
+  }
+  .task-grid {
+    @apply grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+  .tasks-header {
+    @apply mt-2 flex flex-col justify-between sm:flex-row sm:items-center;
+  }
+  .sort-container {
+    @apply mt-5 flex items-center sm:mt-0 sm:gap-3;
+  }
+  .empty-grid {
+    @apply mt-10 text-center text-gray-600;
+  }
 
 }
 
