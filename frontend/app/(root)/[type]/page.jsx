@@ -1,7 +1,8 @@
-'use client'
+"use client";
 import { fetchWithAuth } from "@/lib/auth";
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import TaskCard from "@/components/TaskCard";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -32,6 +33,19 @@ const Page = () => {
   const view = params.type;
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const handleUpdate = async (id, data) => {
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, ...data } : t)));
+    await fetchWithAuth(`${BASE_URL}/api/tasks/${id}/`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  };
+  const handleDelete = async (id) => {
+    setTasks((prev) => prev.filter((t) => t.id !== id));
+    await fetchWithAuth(`${BASE_URL}/api/tasks/${id}/`, {
+      method: "DELETE",
+    });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,7 +71,9 @@ const Page = () => {
       <section className="w-full">
         <h1 className="h1 capitalize">{view}</h1>
         <div className="tasks-header">
-          <p className="body-1">Count: <span className="h5">0</span></p>
+          <p className="body-1">
+            Count: <span className="h5">0</span>
+          </p>
           <div className="sort-container">
             <p className="body-1 hidden text-gray-500 sm:block">Sort by:</p>
             Sort
@@ -66,11 +82,16 @@ const Page = () => {
         {tasks.length > 0 ? (
           <section className="task-grid pt-3">
             {tasks.map((t) => (
-              <p>{t.title}</p>
+              <TaskCard
+                key={t.id}
+                task={t}
+                onUpdate={handleUpdate}
+                onDelete={handleDelete}
+              />
             ))}
           </section>
-        ): (
-          <p className='empty-grid body-1'>No tasks here</p>
+        ) : (
+          <p className="empty-grid body-1">No tasks here</p>
         )}
       </section>
     </div>
