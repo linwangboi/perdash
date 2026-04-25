@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { useDebounce } from "use-debounce";
 import { formatCreatedAt } from "@/lib/utils";
@@ -13,6 +13,7 @@ const Search = () => {
   const [open, setOpen] = useState(false);
   const [debouncedQuery] = useDebounce(query, 300);
   const [results, setResults] = useState([]);
+  const searchRef = useRef(null);
   useEffect(() => {
     const fetchFiles = async () => {
       if (debouncedQuery.length === 0) {
@@ -36,7 +37,7 @@ const Search = () => {
         }
 
         const data = await res.json();
-        setResults(data);
+        setResults(data.results);
         setOpen(true);
       } catch (error) {
         console.error("Search failed:", error);
@@ -46,9 +47,20 @@ const Search = () => {
     };
     fetchFiles();
   }, [debouncedQuery]);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [])
 
   return (
-    <div className="search">
+    <div ref={searchRef} className="search">
       <div className="search-input-wrapper">
         <Image src="/assets/search.svg" alt="search" width={24} height={24} />
         <Input
@@ -69,9 +81,9 @@ const Search = () => {
               >
                 <div className="flex cursor-pointer items-center gap-4">
                   <p className="line-clamp-1">{task.title}</p>
-                  <p className="subtitle-2 line-clamp-1 text-gray-400">
+                  {/* <p className="subtitle-2 line-clamp-1 text-gray-400">
                     {task.content}
-                  </p>
+                  </p> */}
                 </div>
                 <p className="caption line-clamp-1 text-gray-300">
                   {formatCreatedAt(task.created_at)}
@@ -79,7 +91,7 @@ const Search = () => {
               </li>
             ))
           ) : (
-            <p className="empty-result">No files found</p>
+            <p className="empty-result text-gray-400">No files found</p>
           )}
         </ul>
       )}
