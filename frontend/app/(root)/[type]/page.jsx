@@ -4,6 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import TaskCard from "@/components/TaskCard";
 import Pages from "@/components/Pages";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -19,7 +27,7 @@ const getTasks = async (
     limit,
     sort_by: sortBy,
     order,
-    view
+    view,
   });
 
   const res = await fetchWithAuth(`${BASE_URL}/api/tasks/?${params}`);
@@ -28,10 +36,8 @@ const getTasks = async (
   // If we get paginated response
   if (data.results && data.pagination) {
     const tasks = data.results;
-  
     return { tasks: tasks, pagination: data.pagination };
   }
-
   // Fallback for old response format
   return { tasks: data, pagination: null };
 };
@@ -100,14 +106,30 @@ const Page = () => {
         <h1 className="h1 capitalize">{view}</h1>
         <div className="tasks-header">
           <p className="body-1">
-            Count:{" "}
-            <span className="h5">
-              {pagination?.total_count || 0}
-            </span>
+            Count: <span className="h5">{pagination?.total_count || 0}</span>
           </p>
           <div className="sort-container">
             <p className="body-1 hidden text-gray-500 sm:block">Sort by:</p>
-            <select
+            <Select
+              value={`${sortBy}-${order}`}
+              onValueChange={(value) => {
+                const [field, ord] = value.split("-");
+                handleSortChange(field, ord);
+              }}
+            >
+              <SelectTrigger className='border border-gray-200 text-gray-600'>
+                <SelectValue placeholder="Sort..." />
+              </SelectTrigger>
+              <SelectContent className='backdrop-blur-md bg-white text-gray-600 border border-gray-200'>
+                <SelectGroup>
+                  <SelectItem value="created_at-desc">Newest First</SelectItem>
+                  <SelectItem value="created_at-asc">Oldest First</SelectItem>
+                  <SelectItem value="title-asc">Title A-Z</SelectItem>
+                  <SelectItem value="title-desc">Title Z-A</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            {/* <select
               value={`${sortBy}-${order}`}
               onChange={(e) => {
                 const [field, ord] = e.target.value.split("-");
@@ -119,7 +141,7 @@ const Page = () => {
               <option value="created_at-asc">Oldest First</option>
               <option value="title-asc">Title A-Z</option>
               <option value="title-desc">Title Z-A</option>
-            </select>
+            </select> */}
           </div>
         </div>
         {tasks.length > 0 ? (

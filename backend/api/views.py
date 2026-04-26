@@ -2,6 +2,7 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from math import ceil
 
 from .models import Task
 from .serializers import TaskSerializer, CustomUserSerializer
@@ -10,6 +11,49 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+from datetime import timezone
+
+
+def get_pagination_and_sort(request, queryset):
+    """Helper function to apply pagination and sorting to a queryset"""
+    # Sorting
+    sort_by = request.GET.get("sort_by", "created_at")  # title or created_at
+    order = request.GET.get("order", "desc")  # asc or desc
+
+    valid_sort_fields = ["title", "created_at"]
+    if sort_by not in valid_sort_fields:
+        sort_by = "created_at"
+
+    if order == "asc":
+        queryset = queryset.order_by(sort_by)
+    else:
+        queryset = queryset.order_by(f"-{sort_by}")
+
+    # Pagination
+    page = int(request.GET.get("page", 1))
+    limit = int(request.GET.get("limit", 10))
+
+    if page < 1:
+        page = 1
+    if limit < 1 or limit > 100:
+        limit = 10
+
+    total_count = queryset.count()
+    total_pages = ceil(total_count / limit)
+
+    start = (page - 1) * limit
+    end = start + limit
+
+    paginated_queryset = queryset[start:end]
+
+    return paginated_queryset, {
+        "page": page,
+        "limit": limit,
+        "total_count": total_count,
+        "total_pages": total_pages,
+        "has_next": page < total_pages,
+        "has_prev": page > 1,
+    }
 
 
 @extend_schema(
@@ -29,8 +73,11 @@ def task_search(request):
     tasks_qs = Task.objects.filter(created_by=user).filter(
         models.Q(title__icontains=query) | models.Q(content__icontains=query)
     )
-    serializer = TaskSerializer(tasks_qs, many=True)
-    return Response(serializer.data)
+
+    paginated_qs, pagination_meta = get_pagination_and_sort(request, tasks_qs)
+    serializer = TaskSerializer(paginated_qs, many=True)
+
+    return Response({"results": serializer.data, "pagination": pagination_meta})
 
 
 User = get_user_model()
@@ -53,9 +100,23 @@ def tasks(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         elif request.method == "GET":
             user = request.user
-            tasks_qs = Task.objects.filter(created_by=user)
-            serializer = TaskSerializer(tasks_qs, many=True)
-            return Response(serializer.data)
+            type = request.GET.get('view', '')
+            # '', today, completed, important, upcoming
+            if type == 'completed':
+                tasks_qs = Task.objects.filter(created_by=user, done=True)
+            elif type == 'today':
+                tasks_qs = Task.objects.filter(created_by=user, created_at__date=timezone.now().date())
+            elif type == 'important':
+                tasks_qs = Task.objects.filter(created_by=user, star=True)
+            elif type == 'upcoming':
+                tasks_qs = Task.objects.filter(created_by=user, created_at__gt=timezone.now())
+            else:
+                tasks_qs = Task.objects.filter(created_by=user)
+
+            paginated_qs, pagination_meta = get_pagination_and_sort(request, tasks_qs)
+            serializer = TaskSerializer(paginated_qs, many=True)
+
+            return Response({"results": serializer.data, "pagination": pagination_meta})
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
