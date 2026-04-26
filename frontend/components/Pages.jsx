@@ -33,7 +33,12 @@ export default function Pages({ current, total, onPageChange }) {
         {startPage > 1 && (
           <>
             <PaginationItem>
-              <PaginationLink className='cursor-pointer' onClick={() => onPageChange(1)}>1</PaginationLink>
+              <PaginationLink
+                className="cursor-pointer"
+                onClick={() => onPageChange(1)}
+              >
+                1
+              </PaginationLink>
             </PaginationItem>
             {startPage > 2 && (
               <PaginationItem>
@@ -43,12 +48,11 @@ export default function Pages({ current, total, onPageChange }) {
           </>
         )}
         {pages.map((page) => (
-          <PaginationItem>
+          <PaginationItem key={page}>
             <PaginationLink
-              key={page}
               onClick={() => onPageChange(page)}
               isActive={page === current}
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
               {page}
             </PaginationLink>
@@ -62,7 +66,10 @@ export default function Pages({ current, total, onPageChange }) {
               </PaginationItem>
             )}
             <PaginationItem>
-              <PaginationLink className='cursor-pointer' onClick={() => onPageChange(total)}>
+              <PaginationLink
+                className="cursor-pointer"
+                onClick={() => onPageChange(total)}
+              >
                 {total}
               </PaginationLink>
             </PaginationItem>

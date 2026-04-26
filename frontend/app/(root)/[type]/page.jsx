@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import AddTask from "@/components/AddTask";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -79,8 +80,7 @@ const Page = () => {
     setCurrentPage(1);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchTasks = async () => {
       try {
         const { tasks: fetchedTasks, pagination: paginationData } =
           await getTasks(view, currentPage, limit, sortBy, order);
@@ -91,10 +91,15 @@ const Page = () => {
       } finally {
         setLoading(false);
       }
-    };
+  }
+  const handleTaskCreated = async () => {
+    setCurrentPage(1);
+    await fetchTasks();
+  }
 
+  useEffect(() => {
     if (view) {
-      fetchData();
+      fetchTasks();
     }
   }, [view, currentPage, sortBy, order]);
 
@@ -103,7 +108,11 @@ const Page = () => {
   return (
     <div className="page-container">
       <section className="w-full">
-        <h1 className="h1 capitalize">{view}</h1>
+        <div className="flex justify-between">
+          <h1 className="h1 capitalize">{view}</h1>
+          <AddTask onTaskCreated={handleTaskCreated}/>
+        </div>
+
         <div className="tasks-header">
           <p className="body-1">
             Count: <span className="h5">{pagination?.total_count || 0}</span>
@@ -117,10 +126,10 @@ const Page = () => {
                 handleSortChange(field, ord);
               }}
             >
-              <SelectTrigger className='border border-gray-200 text-gray-600'>
+              <SelectTrigger className="border border-gray-200 text-gray-600">
                 <SelectValue placeholder="Sort..." />
               </SelectTrigger>
-              <SelectContent className='backdrop-blur-md bg-white text-gray-600 border border-gray-200'>
+              <SelectContent className="backdrop-blur-md bg-white text-gray-600 border border-gray-200">
                 <SelectGroup>
                   <SelectItem value="created_at-desc">Newest First</SelectItem>
                   <SelectItem value="created_at-asc">Oldest First</SelectItem>
@@ -129,19 +138,6 @@ const Page = () => {
                 </SelectGroup>
               </SelectContent>
             </Select>
-            {/* <select
-              value={`${sortBy}-${order}`}
-              onChange={(e) => {
-                const [field, ord] = e.target.value.split("-");
-                handleSortChange(field, ord);
-              }}
-              className="px-2 py-1 border rounded"
-            >
-              <option value="created_at-desc">Newest First</option>
-              <option value="created_at-asc">Oldest First</option>
-              <option value="title-asc">Title A-Z</option>
-              <option value="title-desc">Title Z-A</option>
-            </select> */}
           </div>
         </div>
         {tasks.length > 0 ? (
