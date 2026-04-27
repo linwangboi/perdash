@@ -15,6 +15,7 @@ import { Textarea } from "./ui/textarea";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { formatCreatedAt } from "@/lib/utils";
+import ConfirmDelete from "./ConfirmDelete";
 
 const TaskCard = ({ task, onUpdate, onDelete }) => {
   const [editing, setEditing] = useState(false);
@@ -52,11 +53,7 @@ const TaskCard = ({ task, onUpdate, onDelete }) => {
           <p className="text-sm text-gray-500 line-clamp-3">{content}</p>
         )}
         <div className="flex justify-between items-center mt-10">
-          <X
-            className="text-red-400 cursor-pointer"
-            onClick={() => onDelete(task.id)}
-            size={16}
-          />
+          <ConfirmDelete onDelete={onDelete} taskId={task.id} />
           <p className="text-xs text-gray-400">
             {formatCreatedAt(task.created_at)}
           </p>

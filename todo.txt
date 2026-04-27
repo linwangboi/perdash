@@ -1,11 +1,17 @@
 #to do list
-1. pagination
 3. for search result, formulate it for them to have unified title, content and date width, add scrollbar, default height, add redirect to detail page icon
 5. user profile edit endpoint to allow user edit user first name last name
-6. sortby finalize
 7. refactor tests due to server side task type queryset branching
 
 
 
-use shadcd select to replace the sortby dropdown menu
-use popover + sheet to support adding new task
+
+Next evolution (don’t skip thinking about this)
+
+Eventually you want:
+
+Optimistic update
+
+👉 Add task instantly to UI
+👉 THEN sync with backend
+
