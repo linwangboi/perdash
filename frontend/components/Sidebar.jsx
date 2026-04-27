@@ -12,11 +12,11 @@ const Sidebar = ({ firstName, email }) => {
     <aside className="sidebar">
       <Link href="/">
         <Image
-          src="/assets/logo-full.svg"
+          src="/assets/logo-full-red.svg"
           alt="logo"
           width={160}
           height={50}
-          className="hidden h-auto ml-10 lg:block opacity-30"
+          className="hidden h-auto ml-10 lg:block"
         />
         <Image
           src="/assets/logo-full-red.svg"
