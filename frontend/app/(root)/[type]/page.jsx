@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AddTask from "@/components/AddTask";
+import { toast } from "sonner";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
@@ -61,6 +62,7 @@ const Page = () => {
       method: "PATCH",
       body: JSON.stringify(data),
     });
+    toast.success('Task has been updated', { position: "top-center"})
   };
 
   const handleDelete = async (id) => {
@@ -68,6 +70,7 @@ const Page = () => {
     await fetchWithAuth(`${BASE_URL}/api/tasks/${id}/`, {
       method: "DELETE",
     });
+    toast.success('Task has been deleted', { position: "top-center"})
   };
 
   const handlePageChange = (newPage) => {

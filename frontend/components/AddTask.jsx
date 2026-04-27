@@ -16,6 +16,7 @@ import { Plus } from "lucide-react";
 import { fetchWithAuth } from "@/lib/auth";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
+import { toast } from "sonner";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const AddTask = ({onTaskCreated}) => {
@@ -45,6 +46,7 @@ const AddTask = ({onTaskCreated}) => {
       setStar(false);
       setOpen(false);
       onTaskCreated();
+      toast.success('Task has been created', { position: "top-center"})
     } catch (error) {
       console.error("Error:", error);
     } finally {

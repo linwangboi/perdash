@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar'
 import React, { useState, useEffect } from 'react'
 import { clearTokens, fetchWithAuth } from '@/lib/auth'
 import { useRouter } from 'next/navigation'
+import { Toaster } from '@/components/ui/sonner'
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || ''
 
@@ -49,6 +50,7 @@ const layout = ({children}) => {
             <MobileNav />
             <Header email={userData.email} />
             <div className='main-content'>{children}</div>
+            <Toaster />
         </section>
     </main>
   )
