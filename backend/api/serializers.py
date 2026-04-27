@@ -65,3 +65,10 @@ class SignupSerializer(serializers.ModelSerializer):
 class SignupResponseSerializer(serializers.Serializer):
     message = serializers.CharField()
     email = serializers.EmailField()
+
+
+class UserProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name']
+        

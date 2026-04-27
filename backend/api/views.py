@@ -2,16 +2,20 @@
 
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.utils import timezone
 from math import ceil
 
 from .models import Task
-from .serializers import TaskSerializer, CustomUserSerializer
+from .serializers import (
+    TaskSerializer,
+    CustomUserSerializer,
+    UserProfileUpdateSerializer,
+)
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
-from datetime import timezone
 
 
 def get_pagination_and_sort(request, queryset):
@@ -100,16 +104,20 @@ def tasks(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         elif request.method == "GET":
             user = request.user
-            type = request.GET.get('view', '')
+            type = request.GET.get("view", "")
             # '', today, completed, important, upcoming
-            if type == 'completed':
+            if type == "completed":
                 tasks_qs = Task.objects.filter(created_by=user, done=True)
-            elif type == 'today':
-                tasks_qs = Task.objects.filter(created_by=user, created_at__date=timezone.now().date())
-            elif type == 'important':
+            elif type == "today":
+                tasks_qs = Task.objects.filter(
+                    created_by=user, created_at__date=timezone.now().date()
+                )
+            elif type == "important":
                 tasks_qs = Task.objects.filter(created_by=user, star=True)
-            elif type == 'upcoming':
-                tasks_qs = Task.objects.filter(created_by=user, created_at__gt=timezone.now())
+            elif type == "upcoming":
+                tasks_qs = Task.objects.filter(
+                    created_by=user, created_at__gt=timezone.now()
+                )
             else:
                 tasks_qs = Task.objects.filter(created_by=user)
 
@@ -150,9 +158,17 @@ def task_detail(request, pk):
 @extend_schema(
     responses={200: CustomUserSerializer},
 )
-@api_view(["GET"])
+@api_view(["GET", "PATCH"])
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     """Get current user's profile information"""
-    serializer = CustomUserSerializer(request.user)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    user = request.user
+    if request.method == "GET":
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == "PATCH":
+        serializer = UserProfileUpdateSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
