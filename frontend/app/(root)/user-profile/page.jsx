@@ -141,6 +141,7 @@ const UserProfilePage = () => {
         </Button>
         <h1 className="text-3xl font-bold">Profile Settings</h1>
       </div>
+      
       {/* Content */}
       <div className="p-6 space-y-6">
         {/* Profile Info Card */}
