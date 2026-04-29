@@ -307,7 +307,7 @@ const UserProfilePage = () => {
         </Card>
 
         {/* Placeholder Sections for Future Features */}
-        <Card className="backdrop-blur-lg border-red-100 opacity-60">
+        <Card className="backdrop-blur-lg border border-red-100">
           <CardHeader>
             <CardTitle className="text-lg">Privacy & Security</CardTitle>
             <CardDescription>
@@ -322,7 +322,7 @@ const UserProfilePage = () => {
           </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-lg border-red-100 opacity-60">
+        <Card className="backdrop-blur-lg border border-red-100">
           <CardHeader>
             <CardTitle className="text-lg">Preferences</CardTitle>
             <CardDescription>Customize your experience</CardDescription>
@@ -334,7 +334,7 @@ const UserProfilePage = () => {
           </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-lg border-red-100 opacity-60">
+        <Card className="backdrop-blur-lg border border-red-100">
           <CardHeader>
             <CardTitle className="text-lg">Activity</CardTitle>
             <CardDescription>View your recent activity</CardDescription>
@@ -346,7 +346,7 @@ const UserProfilePage = () => {
           </CardContent>
         </Card>
 
-        <Card className="backdrop-blur-lg border-red-100 opacity-60">
+        <Card className="backdrop-blur-lg border border-red-100">
           <CardHeader>
             <CardTitle className="text-lg">Danger Zone</CardTitle>
             <CardDescription>Irreversible actions</CardDescription>

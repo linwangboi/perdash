@@ -73,25 +73,23 @@ const Sidebar = ({ firstName, email }) => {
           height={44}
           className="sidebar-user-avatar"
         />
-        <div className="hidden lg:block">
+        <div className="hidden lg:block line-clamp-1">
           <p className="subtitle-2 capitalize">{firstName}</p>
           <p className="caption">{email}</p>
         </div>
-        <div className="header-wrapper">
-          <Button
-            type="button"
-            onClick={handleSignOut}
-            className="sign-out-button"
-          >
-            <Image
-              src="/assets/logout.svg"
-              alt="Sign out"
-              width={24}
-              height={24}
-              className="w-6"
-            />
-          </Button>
-        </div>
+        <Button
+          type="button"
+          onClick={handleSignOut}
+          className="sign-out-button"
+        >
+          <Image
+            src="/assets/logout.svg"
+            alt="Sign out"
+            width={24}
+            height={24}
+            className="w-6"
+          />
+        </Button>
       </div>
     </aside>
   );
