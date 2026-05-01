@@ -146,3 +146,9 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 CORS_ALLOW_ALL_ORIGINS = True  # dev only
 
 CORS_ALLOW_CREDENTIALS = True  # if using cookies
+
+# URL of the frontend (e.g., React or Vue.js app)
+FRONTEND_URL = 'http://localhost:3000'
+
+# Default email address used in the "From" field for outgoing emails
+DEFAULT_FROM_EMAIL = 'no-reply@perdash.com'
