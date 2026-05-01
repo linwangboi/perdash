@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 def get_pagination_and_sort(request, queryset):
@@ -172,3 +173,27 @@ def user_profile(request):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def verify_email(request):
+    token = request.query_params.get('token')
+    if not token:
+        return Response({'error': 'Missing token.'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']
+    except:
+        return Response({'error': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+    if user.is_verified:
+        return Response({'detail': 'Email already verified'}, status=status.HTTP_200_OK)
+    user.is_verified = True
+    user.save()
+    return Response(
+        {"detail": "Email verified successfully!"},
+        status=status.HTTP_200_OK,
+    )
+

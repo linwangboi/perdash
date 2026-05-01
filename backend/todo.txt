@@ -1,0 +1,5 @@
+1. Email:
+    retry failed emails 🔁
+    background jobs (Celery) ⚙️
+    email templates (HTML) 🎨
+    verification token expiry rules ⏳

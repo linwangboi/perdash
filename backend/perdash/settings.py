@@ -140,8 +140,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# Email configuration for development
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CORS_ALLOW_ALL_ORIGINS = True  # dev only
 
@@ -150,5 +148,16 @@ CORS_ALLOW_CREDENTIALS = True  # if using cookies
 # URL of the frontend (e.g., React or Vue.js app)
 FRONTEND_URL = 'http://localhost:3000'
 
-# Default email address used in the "From" field for outgoing emails
-DEFAULT_FROM_EMAIL = 'no-reply@perdash.com'
+
+# Email configuration for development
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'sydneyswen0@gmail.com'
+EMAIL_HOST_PASSWORD = "nngnlwjnnxjdkakv"
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
