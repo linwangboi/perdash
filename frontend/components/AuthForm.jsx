@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-
 const AuthForm = ({ type }) => {
   const [form, setForm] = useState({
     email: "",
@@ -26,12 +25,13 @@ const AuthForm = ({ type }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
   const router = useRouter();
 
   const handleChange = (e) => {
     setForm({
       ...form,
-      [e.target.id]: e.target.value, 
+      [e.target.id]: e.target.value,
     });
   };
 
@@ -40,7 +40,10 @@ const AuthForm = ({ type }) => {
     setIsLoading(true);
     setErrorMessage("");
     try {
-      const url = type === "sign-in" ? `${BASE_URL}/api/token/` : `${BASE_URL}/api/signup/`;
+      const url =
+        type === "sign-in"
+          ? `${BASE_URL}/api/token/`
+          : `${BASE_URL}/api/signup/`;
       const payload =
         type === "sign-in"
           ? {
@@ -62,16 +65,16 @@ const AuthForm = ({ type }) => {
       const data = await res.json();
       if (!res.ok) {
         setErrorMessage(getErrorMessage(data));
-        return
+        return;
       }
 
       if (type === "sign-in") {
         saveTokens({ access: data.access, refresh: data.refresh });
-      } else if (type === 'sign-up') {
-        router.push('/sign-in');
+      } else if (type === "sign-up") {
+        setSignUpSuccess(true);
         return;
       }
-      router.push('/');
+      router.push("/");
     } catch (error) {
       setErrorMessage("Something went wrong");
       console.log(error);
@@ -79,6 +82,76 @@ const AuthForm = ({ type }) => {
       setIsLoading(false);
     }
   };
+
+  if (signUpSuccess) {
+    return (
+      <Card className="w-full max-w-xl">
+        <CardHeader className="mb-2">
+          <div className="flex justify-center mb-4">
+            <div
+              className="relative w-16 h-16 rounded-full flex items-center justify-center"
+              style={{
+                background:
+                  "linear-gradient(135deg, hsl(var(--brand)), hsl(var(--pink)))",
+              }}
+            >
+              <svg
+                className="w-8 h-8 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+          </div>
+          <CardTitle className="text-center text-2xl font-bold">
+            Account Created!
+          </CardTitle>
+          <CardDescription className="text-center mt-2">
+            We&apos;ve sent a verification link to
+            <br />
+            <span className="font-semibold text-foreground">{form.email}</span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4">
+            <div className="bg-light-400 rounded-2xl p-4">
+              <p className="text-sm text-muted-foreground text-center">
+                Please check your email and click the verification link to
+                complete your registration.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground text-center">
+                Once verified, you&apos;ll be able to access all features and
+                start creating tasks.
+              </p>
+            </div>
+
+            <hr className="text-gray-500/30" />
+
+            <Button
+              onClick={() => router.push("/sign-in")}
+              className="w-full bg-brand rounded-3xl text-lg text-white font-semibold py-4 shadow-xs"
+            >
+              Back to Login
+            </Button>
+
+            <p className="text-xs text-muted-foreground text-center">
+              Didn&apos;t receive the email? Check your spam folder.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-xl">
@@ -95,9 +168,13 @@ const AuthForm = ({ type }) => {
         </CardDescription>
         <CardAction>
           {type === "sign-in" ? (
-            <Button variant="link" onClick={() => router.push('/sign-up')}>Sign Up</Button>
+            <Button variant="link" onClick={() => router.push("/sign-up")}>
+              Sign Up
+            </Button>
           ) : (
-            <Button variant="link"onClick={() => router.push('/sign-in')} >Login</Button>
+            <Button variant="link" onClick={() => router.push("/sign-in")}>
+              Login
+            </Button>
           )}
         </CardAction>
       </CardHeader>
@@ -144,9 +221,7 @@ const AuthForm = ({ type }) => {
               </div>
             )}
             {errorMessage && (
-              <p className="text-red-500 text-sm">
-                {errorMessage}
-              </p>
+              <p className="text-red-500 text-sm">{errorMessage}</p>
             )}
             <hr className="text-gray-500/30" />
             <Button

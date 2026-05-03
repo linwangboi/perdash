@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from math import ceil
-
+from .utils import send_verification_email
 from .models import Task
 from .serializers import (
     TaskSerializer,
@@ -197,3 +197,19 @@ def verify_email(request):
         status=status.HTTP_200_OK,
     )
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def resend_verification_email(request):
+    user = request.user
+    if not user:
+        return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+    if user.is_verified:
+        return Response({'detail': 'User already verified.'}, status=status.HTTP_200_OK)
+    try:
+        send_verification_email(user)
+    except:
+        return Response({'error': 'Service unavailable, please try again...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response(
+        {"detail": "Email link sent uccessfully!"},
+        status=status.HTTP_200_OK,
+    )

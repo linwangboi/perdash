@@ -3,3 +3,4 @@
     background jobs (Celery) ⚙️
     email templates (HTML) 🎨
     verification token expiry rules ⏳
+2. Add rate limiting using Redis or DRF for resending email verification

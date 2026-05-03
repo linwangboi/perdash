@@ -3,13 +3,14 @@ import { navItems } from "@/constants";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Button } from "./ui/button";
 import { signOut } from "@/lib/auth";
 
 const Sidebar = ({ firstName, email }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const handleSignOut = async () => {
     await signOut();
     router.push("/sign-in");
