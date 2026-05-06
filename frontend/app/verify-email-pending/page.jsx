@@ -7,9 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { clearTokens } from "@/lib/auth";
+import { clearTokens, fetchWithAuth } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
 
 const VerifyEmailPending = () => {
   const router = useRouter();
@@ -29,7 +32,6 @@ const VerifyEmailPending = () => {
           return;
         }
 
-        const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
         const response = await fetch(`${BASE_URL}/api/user/profile/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -64,6 +66,31 @@ const VerifyEmailPending = () => {
   const handleLogout = () => {
     clearTokens();
     router.push("/sign-in");
+  };
+  const handleResend = async () => {
+    try {
+      const response = await fetchWithAuth(
+        `${BASE_URL}/api/user/resend_verification_email/`,
+        {
+          method: "POST",
+        },
+      );
+      if (response.ok) {
+        toast.success(
+          "Email verification sent successfully, please check your email.",
+          { position: "top-center" },
+        );
+      } else {
+        toast.error("Failed to send, please try again.", {
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      console.error("Error resending email:", error);
+      toast.error("Failed to send, please try again.", {
+        position: "top-center",
+      });
+    }
   };
 
   if (loading) {
@@ -128,8 +155,11 @@ const VerifyEmailPending = () => {
 
             <div className="space-y-3">
               <p className="text-xs text-muted-foreground text-center">
-                Didn&apos;t receive the email? Check your spam folder or try
-                signing out and signing back in.
+                Didn&apos;t receive the email? Check your spam folder or click{" "}
+                <Button className="underline" onClick={handleResend}>
+                  here
+                </Button>{" "}
+                to resend Email verification.
               </p>
             </div>
 

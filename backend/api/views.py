@@ -210,6 +210,6 @@ def resend_verification_email(request):
     except:
         return Response({'error': 'Service unavailable, please try again...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response(
-        {"detail": "Email link sent uccessfully!"},
+        {"detail": "Email link sent sccessfully!"},
         status=status.HTTP_200_OK,
     )
