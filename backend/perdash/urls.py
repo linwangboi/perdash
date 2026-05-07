@@ -26,4 +26,6 @@ urlpatterns = [
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
+    # neon db
+    path('', views.db_version, name='db_version'),
 ]

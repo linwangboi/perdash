@@ -1,5 +1,7 @@
 
 from django.contrib.auth import get_user_model
+from django.db import connection
+from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -46,3 +48,11 @@ def signout(request):
         return Response(status=status.HTTP_204_NO_CONTENT)
     except Exception as exc:
         return Response({"error": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# testing connection string
+def db_version(request):
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT version();')
+        version = cursor.fetchone()[0]
+    return JsonResponse({'version': version})

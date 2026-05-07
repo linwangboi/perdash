@@ -4,3 +4,5 @@
     email templates (HTML) 🎨
     verification token expiry rules ⏳
 2. Add rate limiting using Redis or DRF for resending email verification
+3. connect to free db hosting service: 
+    postgresql://neondb_owner:npg_GEpkcmAeKJ53@ep-broad-band-aqtvvcgj.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require
