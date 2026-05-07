@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "api",
     "drf_spectacular",
     "corsheaders",
+    'django_celery_results',
 ]
 
 AUTH_USER_MODEL = "api.CustomUser"
@@ -150,15 +151,21 @@ CORS_ALLOW_CREDENTIALS = True  # if using cookies
 FRONTEND_URL = config('FRONTEND_URL')
 
 
-# Email configuration for development
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# # Email configuration for development
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = config("EMAIL_HOST")
-EMAIL_PORT = config("EMAIL_PORT", cast=int)
-EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
+# EMAIL_HOST = config("EMAIL_HOST")
+# EMAIL_PORT = config("EMAIL_PORT", cast=int)
+# EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool)
 
-EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+# EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+
+
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_ACCEPT_CONTENT = ['json'] 
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-cache'

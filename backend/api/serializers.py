@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import CustomUser, Task
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.conf import settings
-from .utils import send_verification_email
+from .tasks import send_verification_email_task
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Read-only serializer for user data"""
@@ -61,7 +61,7 @@ class SignupSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = CustomUser.objects.create_user(**validated_data)
-        send_verification_email(user)
+        send_verification_email_task.delay(user.id)
         return user
 
 

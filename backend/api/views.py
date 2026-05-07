@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from math import ceil
-from .utils import send_verification_email
 from .models import Task
 from .serializers import (
     TaskSerializer,
@@ -17,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from rest_framework_simplejwt.tokens import AccessToken
+from .tasks import send_verification_email_task
 
 
 def get_pagination_and_sort(request, queryset):
@@ -205,11 +205,8 @@ def resend_verification_email(request):
         return Response({'error': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
     if user.is_verified:
         return Response({'detail': 'User already verified.'}, status=status.HTTP_200_OK)
-    try:
-        send_verification_email(user)
-    except:
-        return Response({'error': 'Service unavailable, please try again...'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    send_verification_email_task.delay(user.id)
     return Response(
-        {"detail": "Email link sent sccessfully!"},
+        {"detail": "Email link sent sccessfully. Please check your email in a few minutes!"},
         status=status.HTTP_200_OK,
     )
