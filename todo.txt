@@ -15,3 +15,13 @@ Optimistic update
 👉 Add task instantly to UI
 👉 THEN sync with backend
 
+
+
+
+Stack:
+Frontend → React/Vercel
+Backend → Django
+Queue → Celery
+Broker → Redis
+Email → Resend
+DB → Neon PostgreSQL
