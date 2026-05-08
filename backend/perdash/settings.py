@@ -22,14 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config("SECRET_KEY")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config("DEBUG", cast=bool)
 
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(',')
+ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
 
 
 # Application definition
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     "api",
     "drf_spectacular",
     "corsheaders",
-    'django_celery_results',
+    "django_celery_results",
 ]
 
 AUTH_USER_MODEL = "api.CustomUser"
@@ -99,19 +99,19 @@ WSGI_APPLICATION = "perdash.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': config('PGDATABASE'),
-    'USER': config('PGUSER'),
-    'PASSWORD': config('PGPASSWORD'),
-    'HOST': config('PGHOST'),
-    'PORT': config('PGPORT', 5432),
-    'OPTIONS': {
-      'sslmode': 'require',
-    },
-    'DISABLE_SERVER_SIDE_CURSORS': True,
-    'CONN_HEALTH_CHECKS': True,
-  }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("PGDATABASE"),
+        "USER": config("PGUSER"),
+        "PASSWORD": config("PGPASSWORD"),
+        "HOST": config("PGHOST"),
+        "PORT": config("PGPORT", 5432),
+        "OPTIONS": {
+            "sslmode": "require",
+        },
+        "DISABLE_SERVER_SIDE_CURSORS": True,
+        "CONN_HEALTH_CHECKS": True,
+    }
 }
 
 
@@ -157,7 +157,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # dev only
 CORS_ALLOW_CREDENTIALS = True  # if using cookies
 
 # URL of the frontend (e.g., React or Vue.js app)
-FRONTEND_URL = config('FRONTEND_URL')
+FRONTEND_URL = config("FRONTEND_URL")
 
 
 # # Email configuration for development
@@ -173,8 +173,7 @@ FRONTEND_URL = config('FRONTEND_URL')
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-
-CELERY_BROKER_URL = config('CELERY_BROKER_URL')
-CELERY_ACCEPT_CONTENT = ['json'] 
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'django-cache'
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = "django-cache"
