@@ -1,0 +1,8 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y postgresql-client gcc && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements
+COPY . .
+EXPOSE 10000
+CMD [ "gunicorn", "perdash.wsgi:application", "--bind", "0.0.0.0:10000" ]

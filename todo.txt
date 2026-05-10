@@ -25,3 +25,8 @@ Queue → Celery
 Broker → Redis
 Email → Resend
 DB → Neon PostgreSQL
+
+1. make docker image
+2. upload to docker hub
+3. deploy on redner
+4. do Frontend
