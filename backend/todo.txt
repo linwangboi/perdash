@@ -1,2 +1,4 @@
 
 2. Add rate limiting using Redis or DRF for resending email verification
+
+
