@@ -12,6 +12,10 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+#--build-arg NEXT_PUBLIC_API_URL=https://perdash-backend-production-490f.up.railway.app
 RUN npm run build
 
 # ── Production runner ──────────────────────────
