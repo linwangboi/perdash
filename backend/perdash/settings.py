@@ -108,19 +108,18 @@ WSGI_APPLICATION = "perdash.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": config("PGDATABASE"),
-        "USER": config("PGUSER"),
-        "PASSWORD": config("PGPASSWORD"),
-        "HOST": config("PGHOST"),
-        "PORT": config("PGPORT", 5432),
+        "NAME": config("PGDATABASE", default="postgres"),
+        "USER": config("PGUSER", default="postgres"),
+        "PASSWORD": config("PGPASSWORD", default="postgres"),
+        "HOST": config("PGHOST", default="localhost"),
+        "PORT": config("PGPORT", default=5432, cast=int),
         "OPTIONS": {
-            "sslmode": "require",
+            "sslmode": config("PGSSLMODE", default="prefer"),
         },
         "DISABLE_SERVER_SIDE_CURSORS": True,
         "CONN_HEALTH_CHECKS": True,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -184,7 +183,14 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = "django-cache"
 
-CSRF_TRUSTED_ORIGINS = config("CSRF_TRUSTED_ORIGINS").split(",") + [config("FRONTEND_URL")] 
+CSRF_TRUSTED_ORIGINS = (
+    config(
+        "CSRF_TRUSTED_ORIGINS",
+        default=""
+    ).split(",")
+    if config("CSRF_TRUSTED_ORIGINS", default="")
+    else []
+) + [FRONTEND_URL]
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
