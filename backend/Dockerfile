@@ -10,6 +10,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+RUN python manage.py collectstatic --noinput
 
 # Copy entrypoint and make it executable
 COPY entrypoint.sh .
